@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111713">
+<title>Trail to Freedom: Escaping Seattle</title>
+<style>
+:root{--bg:#111713;--panel:#1b241d;--text:#edf0e8;--muted:#aeb8ad;--accent:#e8c547;--danger:#c65a4a;--ok:#68a56b;--border:#39463b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+main{max-width:760px;margin:auto;padding:16px 14px 28px}
+h1,h2,p{margin-top:0}
+.title{text-align:center;padding:18px 4px}
+.title h1{color:var(--accent);font-size:clamp(30px,9vw,58px);line-height:.95;margin-bottom:12px}
+.subtitle{color:var(--muted);font-size:14px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#151d17;border:1px solid var(--border);border-radius:10px;padding:10px}
+.stat b{display:block;color:var(--accent);font-size:22px}
+button{width:100%;border:0;border-radius:12px;padding:14px 12px;margin-top:10px;background:var(--accent);color:#111;font:700 16px inherit}
+button.secondary{background:#d6ddd3}
+button.danger{background:var(--danger);color:white}
+button:disabled{opacity:.5}
+.progress{height:12px;background:#303a32;border-radius:99px;overflow:hidden;margin-top:8px}
+.progress>span{display:block;height:100%;background:var(--accent)}
+.scene{height:160px;position:relative;overflow:hidden;border-radius:12px;background:linear-gradient(#415649 0 50%,#6c795c 50% 72%,#685640 72%)}
+.mountain{position:absolute;bottom:44px;width:0;height:0;border-left:95px solid transparent;border-right:95px solid transparent;border-bottom:100px solid #78836a}
+.m1{left:-50px}.m2{left:150px;border-bottom-color:#87917b}.m3{right:-50px}
+.road{position:absolute;bottom:0;left:25%;width:50%;height:65px;background:#51483d;clip-path:polygon(38% 0,62% 0,100% 100%,0 100%)}
+.rv{position:absolute;bottom:28px;left:47%;width:110px;height:45px;background:#ded8c0;border:4px solid #202720;border-radius:5px}
+.rv:before{content:"";position:absolute;right:-25px;bottom:-4px;width:30px;height:36px;background:#ded8c0;border:4px solid #202720;border-left:0}
+.wheel{position:absolute;bottom:-14px;width:24px;height:24px;background:#111;border:5px solid #777;border-radius:50%}.w1{left:14px}.w2{right:8px}
+.window{position:absolute;top:7px;width:23px;height:15px;background:#405e61}.win1{left:8px}.win2{left:39px}
+.event-title{color:var(--accent);font-size:21px}
+.log{min-height:74px;color:var(--muted);line-height:1.45}
+.bad{color:#ff9a89}.good{color:#90d693}
+.hidden{display:none}
+.small{font-size:13px;color:var(--muted)}
+.route{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+<main>
+<section id="start" class="title">
+  <h1>TRAIL TO FREEDOM</h1>
+  <p class="subtitle">Escaping Seattle</p>
+  <div class="scene" aria-label="Retro RV crossing post-apocalyptic America">
+    <div class="mountain m1"></div><div class="mountain m2"></div><div class="mountain m3"></div><div class="road"></div>
+    <div class="rv"><span class="window win1"></span><span class="window win2"></span><span class="wheel w1"></span><span class="wheel w2"></span></div>
+  </div>
+  <div class="card">
+    <p>Seattle has fallen to the shambling Consensus Horde. Lead five travelers across 3,100 miles of absurd post-apocalyptic America and reach Florida before your supplies—or sanity—run out.</p>
+    <button id="startBtn">START THE EXODUS</button>
+  </div>
+  <p class="small">Fictional, exaggerated political satire.</p>
+</section>
+
+<section id="game" class="hidden">
+  <div class="grid">
+    <div class="stat">DAY<b id="day">1</b></div>
+    <div class="stat">MILES<b><span id="miles">0</span>/3100</b></div>
+  </div>
+  <div class="card">
+    <div class="progress"><span id="tripBar" style="width:0%"></span></div>
+    <div class="route"><span>SEATTLE</span><span>FLORIDA</span></div>
+  </div>
+  <div class="scene">
+    <div class="mountain m1"></div><div class="mountain m2"></div><div class="mountain m3"></div><div class="road"></div>
+    <div class="rv"><span class="window win1"></span><span class="window win2"></span><span class="wheel w1"></span><span class="wheel w2"></span></div>
+  </div>
+  <div class="grid">
+    <div class="stat">FOOD<b id="food">100</b></div>
+    <div class="stat">FUEL<b id="fuel">100</b></div>
+    <div class="stat">MORALE<b id="morale">80</b></div>
+    <div class="stat">RV CONDITION<b id="vehicle">100</b></div>
+    <div class="stat">MEDICINE<b id="medicine">5</b></div>
+    <div class="stat">TRAVELERS<b id="travelers">5</b></div>
+  </div>
+
+  <div id="travelPanel" class="card">
+    <p id="travelText">The caravan is ready to leave Seattle.</p>
+    <button id="travelBtn">TRAVEL ANOTHER DAY</button>
+    <button id="scavengeBtn" class="secondary">SCAVENGE FOR SUPPLIES</button>
+    <button id="restBtn" class="secondary">REST AND REPAIR</button>
+  </div>
+
+  <div id="eventPanel" class="card hidden">
+    <h2 id="eventTitle" class="event-title"></h2>
+    <p id="eventDesc"></p>
+    <button id="choiceA"></button>
+    <button id="choiceB" class="secondary"></button>
+  </div>
+
+  <div class="card log" id="log" aria-live="polite">Your story will appear here.</div>
+</section>
+
+<section id="ending" class="title hidden">
+  <h1 id="endingTitle">THE TRAIL ENDS</h1>
+  <div class="card">
+    <p id="endingText"></p>
+    <p id="endingStats" class="small"></p>
+    <button id="againBtn">PLAY AGAIN</button>
+  </div>
+</section>
+</main>
+
+<script>
+const TOTAL=3100;
+const initial=()=>({day:1,miles:0,food:100,fuel:100,morale:80,vehicle:100,medicine:5,travelers:5});
+let s=initial(), currentEvent=null;
+
+const $=id=>document.getElementById(id);
+const events=[
+ {t:"THE MANDATORY APOLOGY CHECKPOINT",d:"A barricade blocks the interstate. The Consensus Horde demands a six-page apology for owning a gasoline vehicle.",a:"Floor it",b:"Pretend to comply",
+  A:()=>effect({fuel:-12,vehicle:-8,morale:5},"You crash through recycled campaign signs. The caravan cheers."),
+  B:()=>effect({food:-10,morale:-8},"The seminar lasts nine hours. Your snacks are redistributed for equitable chewing.")},
+ {t:"ORGANIC KALE AMBUSH",d:"A shambling crowd pours from a roadside co-op chanting, 'LOCAL! ETHICAL! COMPOSTABLE!'",a:"Trade medicine",b:"Escape through a ditch",
+  A:()=>effect({medicine:-1,food:25,morale:-2},"You receive forty pounds of kale and one judgmental stare."),
+  B:()=>effect({fuel:-8,vehicle:-10,morale:3},"The RV survives. The suspension now identifies as broken.")},
+ {t:"CANCEL MOB AT THE GAS STATION",d:"Someone discovers your caravan once laughed at an old sitcom. Outraged undead influencers surround the pumps.",a:"Apologize publicly",b:"Grab fuel and run",
+  A:()=>effect({morale:-15,fuel:10},"Your apology is rejected for insufficient sobbing, but you obtain some fuel."),
+  B:()=>effect({fuel:25,vehicle:-5,morale:5},"You escape before the first 47-part video essay uploads.")},
+ {t:"THE BUREAU OF PERMITTED MOVEMENT",d:"A government remnant says you lack Form 1776-B, Appendix Freedom.",a:"Pay in canned beans",b:"Debate the clerk",
+  A:()=>effect({food:-12,fuel:-5},"The fee is paid. Government efficiency has been restored."),
+  B:()=>effect({morale:7,vehicle:-4},"The debate lasts until the clerk's solar calculator dies.")},
+ {t:"ROADSIDE PATRIOT TRUCK STOP",d:"A fortified truck stop offers repairs, barbecue, and wildly unreliable predictions.",a:"Repair the RV",b:"Stock up on food",
+  A:()=>effect({food:-12,vehicle:30,morale:6},"The mechanic fixes three problems and invents two new noises."),
+  B:()=>effect({fuel:-5,food:35,morale:4},"The brisket may predate the apocalypse, but nobody complains.")},
+ {t:"THE PRONOUN TOLL BRIDGE",d:"A bridge collective demands every traveler declare seventeen pronouns before crossing.",a:"Take the bridge",b:"Find a back road",
+  A:()=>effect({morale:-7,fuel:-3},"Your group invents several pronouns. The guards applaud."),
+  B:()=>effect({fuel:-15,vehicle:-6},"The detour includes mud, potholes, and one intelligent raccoon.")},
+ {t:"MIDWEST TORNADO OF FREEDOM",d:"A tornado carries lawn furniture, campaign mailers, and a fully intact trampoline.",a:"Take shelter",b:"Keep driving",
+  A:()=>effect({food:-6,morale:-3},"The storm passes. Someone claims a free lawn chair."),
+  B:()=>effect({vehicle:-18,morale:8},"You drive through it yelling movie quotes. Memorable, not wise.")},
+ {t:"GEORGIA PEACH MILITIA",d:"A friendly militia offers peaches and directions that all begin with 'y'all.'",a:"Accept supplies",b:"Decline politely",
+  A:()=>effect({food:22,morale:8},"The peaches are excellent. The directions are incomprehensible."),
+  B:()=>effect({morale:-2},"They wave goodbye and loudly question your judgment.")}
+];
+
+function effect(changes,msg){
+ for(const [k,v] of Object.entries(changes)) s[k]+=v;
+ clamp(); log(msg); afterEvent();
+}
+function clamp(){
+ s.food=Math.min(150,s.food); s.fuel=Math.min(150,s.fuel);
+ s.morale=Math.min(100,s.morale); s.vehicle=Math.min(100,s.vehicle);
+ s.medicine=Math.max(0,s.medicine); s.travelers=Math.max(0,s.travelers);
+}
+function log(msg){$("log").textContent=msg}
+function render(){
+ ["day","miles","food","fuel","morale","vehicle","medicine","travelers"].forEach(k=>$(k).textContent=s[k]);
+ $("tripBar").style.width=Math.min(100,(s.miles/TOTAL)*100)+"%";
+}
+function start(){
+ s=initial();
+ $("start").classList.add("hidden"); $("ending").classList.add("hidden"); $("game").classList.remove("hidden");
+ $("eventPanel").classList.add("hidden"); $("travelPanel").classList.remove("hidden");
+ log("You leave Seattle as the Consensus Horde argues over who is authorized to chase you.");
+ render();
+}
+function travel(){
+ s.day++; s.miles+=130+Math.floor(Math.random()*91);
+ s.food-=Math.max(4,s.travelers+Math.floor(Math.random()*4));
+ s.fuel-=5+Math.floor(Math.random()*7);
+ s.morale-=Math.floor(Math.random()*4);
+ if(Math.random()<.18)s.vehicle-=3+Math.floor(Math.random()*8);
+ if(Math.random()<.09&&s.medicine>0){s.medicine--;s.morale-=2;log("A traveler gets sick. One medicine is used.");}
+ clamp(); render();
+ if(checkEnd())return;
+ currentEvent=events[Math.floor(Math.random()*events.length)];
+ $("travelPanel").classList.add("hidden"); $("eventPanel").classList.remove("hidden");
+ $("eventTitle").textContent=currentEvent.t; $("eventDesc").textContent=currentEvent.d;
+ $("choiceA").textContent=currentEvent.a; $("choiceB").textContent=currentEvent.b;
+}
+function scavenge(){
+ s.day++; s.food-=4; s.morale-=2;
+ const r=Math.random();
+ if(r<.45){s.food+=18+Math.floor(Math.random()*18);log("You find abandoned supplies and several expired bumper stickers.");}
+ else if(r<.75){s.fuel+=10+Math.floor(Math.random()*16);s.vehicle-=5;log("You siphon fuel from a campaign bus. The RV takes minor damage.");}
+ else{s.vehicle-=12;s.morale-=6;log("The scavenging team is chased by a feral homeowners association.");}
+ clamp(); render(); checkEnd();
+}
+function rest(){
+ s.day++; s.food-=8; s.vehicle+=14; s.morale+=8; clamp();
+ log("The caravan rests, patches the RV, and avoids discussing politics for twelve whole minutes.");
+ render(); checkEnd();
+}
+function afterEvent(){
+ $("eventPanel").classList.add("hidden"); $("travelPanel").classList.remove("hidden");
+ render(); checkEnd();
+}
+function checkEnd(){
+ if(s.miles>=TOTAL){
+  s.miles=TOTAL; render();
+  finish(true,"You reach Florida. A gator steals a cooler, humidity attacks everyone's hair, and someone tries to sell you a boat before you even park. Freedom is complicated—but your caravan made it.");
+  return true;
+ }
+ let text="";
+ if(s.fuel<=0)text="The RV stops. The caravan is overtaken by a committee proposing a twelve-year transit study.";
+ else if(s.food<=0)text="The food is gone. The final granola bar triggers a constitutional crisis.";
+ else if(s.vehicle<=0)text="The RV disintegrates into patriotic-looking scrap metal.";
+ else if(s.morale<=0)text="The travelers lose hope and vote to open a boutique candle shop in Nebraska.";
+ else if(s.travelers<=0)text="Nobody remains to finish the journey.";
+ if(text){finish(false,text);return true}
+ return false;
+}
+function finish(win,text){
+ $("game").classList.add("hidden"); $("ending").classList.remove("hidden");
+ $("endingTitle").textContent=win?"WELCOME TO FLORIDA":"THE TRAIL ENDS";
+ $("endingText").textContent=text;
+ $("endingStats").textContent=`Days: ${s.day} • Miles: ${s.miles} • Travelers: ${s.travelers}`;
+}
+$("startBtn").addEventListener("click",start);
+$("againBtn").addEventListener("click",start);
+$("travelBtn").addEventListener("click",travel);
+$("scavengeBtn").addEventListener("click",scavenge);
+$("restBtn").addEventListener("click",rest);
+$("choiceA").addEventListener("click",()=>currentEvent.A());
+$("choiceB").addEventListener("click",()=>currentEvent.B());
+</script>
+</body>
+</html>
